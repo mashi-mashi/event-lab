@@ -71,7 +71,7 @@ export class RequestCommandHandler {
 			events: [event],
 		};
 
-		await this.repository.saveRequest(pendingRequest);
+		await this.repository.store(pendingRequest);
 	}
 
 	private async handleApproveRequest(
@@ -105,7 +105,7 @@ export class RequestCommandHandler {
 			events: [...request.events, event],
 		};
 
-		await this.repository.saveRequest(approvedRequest);
+		await this.repository.store(approvedRequest);
 	}
 
 	private async handleRejectRequest(
@@ -141,7 +141,7 @@ export class RequestCommandHandler {
 			events: [...request.events, event],
 		};
 
-		await this.repository.saveRequest(rejectedRequest);
+		await this.repository.store(rejectedRequest);
 	}
 
 	private async handleCancelRequest(
@@ -175,6 +175,6 @@ export class RequestCommandHandler {
 			events: [...request.events, event],
 		};
 
-		await this.repository.saveRequest(canceledRequest);
+		await this.repository.store(canceledRequest);
 	}
 }

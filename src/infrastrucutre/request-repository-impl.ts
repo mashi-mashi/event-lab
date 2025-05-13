@@ -77,7 +77,7 @@ export class RequestRepositoryImpl implements RequestRepository {
 		this.eventStore = eventStore;
 	}
 
-	async saveRequest(request: RequestType): Promise<void> {
+	async store(request: RequestType): Promise<void> {
 		this.requestCache.set(request.id, request);
 		const lastEvent = request.events[request.events.length - 1];
 		if (lastEvent) {

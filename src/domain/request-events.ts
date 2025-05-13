@@ -35,7 +35,6 @@ export interface RequestCanceledEvent extends EventType {
 	type: "REQUEST_CANCELED";
 }
 
-// イベントの総称型
 export type RequestEvent =
 	| RequestCreatedEvent
 	| RequestApprovedEvent
