@@ -3,25 +3,25 @@ import type {
 	CanceledRequest,
 	PendingRequest,
 	RejectedRequest,
-} from "../../domain/request";
+} from "../../domain/request.entity";
 import type {
 	ApproveRequestCommand,
 	CancelRequestCommand,
 	CreateRequestCommand,
 	RejectRequestCommand,
 	RequestCommand,
-} from "../../domain/request-commands";
+} from "../../domain/request.commands";
 import type {
 	RequestApprovedEvent,
 	RequestCanceledEvent,
 	RequestCreatedEvent,
 	RequestRejectedEvent,
-} from "../../domain/request-events";
+} from "../../domain/request.events";
 import {
 	generateUUID,
 	getCurrentTimestamp,
 } from "../../infrastrucutre/id-genenrator";
-import type { RequestRepository } from "../repositories/request-repository";
+import type { RequestRepository } from "../repositories/request.repository";
 
 export class RequestCommandHandler {
 	constructor(private repository: RequestRepository) {}

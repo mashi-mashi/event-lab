@@ -1,15 +1,15 @@
-import type { RequestType } from "../../domain/request";
+import type { RequestType } from "../../domain/request.entity";
 import type {
 	CreateRequestCommand,
 	CancelRequestCommand,
-} from "../../domain/request-commands";
+} from "../../domain/request.commands";
 import type { UserID, UUID } from "../../domain/types";
 import {
 	generateUUID,
 	getCurrentTimestamp,
 } from "../../infrastrucutre/id-genenrator";
-import type { RequestCommandHandler } from "../handlers/request-command-handler";
-import type { RequestRepository } from "../repositories/request-repository";
+import type { RequestCommandHandler } from "../handlers/request.command-handler";
+import type { RequestRepository } from "../repositories/request.repository";
 
 export interface RequesterService {
 	createRequest(

@@ -1,8 +1,8 @@
-import { RequestCommandHandler } from "./application/handlers/request-command-handler";
+import { RequestCommandHandler } from "./application/handlers/request.command-handler";
 import { RequestRepositoryImpl } from "./infrastrucutre/request-repository-impl";
 import { InMemoryEventStore } from "./infrastrucutre/in-memory-event-store";
-import { RequesterServiceImpl } from "./application/services/requester-service";
-import { ApproverServiceImpl } from "./application/services/approver-service";
+import { RequesterServiceImpl } from "./application/services/requester.service";
+import { ApproverServiceImpl } from "./application/services/approver.service";
 
 const main = async () => {
 	const eventStore = new InMemoryEventStore();

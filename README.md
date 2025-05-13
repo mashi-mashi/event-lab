@@ -3,16 +3,14 @@
 To install dependencies:
 
 ```bash
-bun install
+pnpm install
 ```
 
 To run:
 
 ```bash
-bun run index.ts
+pnpm run dev
 ```
-
-This project was created using `bun init` in bun v1.2.13. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
 
 ## アーキテクチャ概要
 
@@ -50,11 +48,30 @@ This project was created using `bun init` in bun v1.2.13. [Bun](https://bun.sh) 
 ## ディレクトリ構成
 
 ```
+
 src/
-  domain/         # ドメインモデル・型定義
-  application/    # サービス・ユースケース・リポジトリインターフェース
-  infrastrucutre/ # リポジトリ実装・ID生成・イベントストア
-  index.ts        # エントリーポイント・サンプル実行
+├── domain/
+│ ├── types.ts # 基本的な型定義（UUID, UserID, Timestamp）
+│ ├── request.ts # リクエストエンティティとその状態定義
+│ ├── request.events.ts # リクエスト関連のドメインイベント定義
+│ └── request.commands.ts # リクエスト関連のコマンド定義
+│
+├── application/
+│ ├── services/
+│ │ ├── requester-service.ts # 申請者向けサービス
+│ │ └── approver-service.ts # 承認者向けサービス
+│ ├── handlers/
+│ │ └── request-command-handler.ts # コマンドハンドラ
+│ └── repositories/
+│ ├── event-store.ts # イベントストアインターフェース
+│ └── request-repository.ts # リクエストリポジトリインターフェース
+│
+├── infrastructure/
+│ ├── request-repository-impl.ts # リクエストリポジトリの実装
+│ ├── in-memory-event-store.ts # インメモリイベントストアの実装
+│ └── id-generator.ts # ID生成ユーティリティ
+│
+└── index.ts # アプリケーションのエントリーポイント
 ```
 
 ---
@@ -64,6 +81,63 @@ src/
 - domain 層は他層に依存しません。
 - application 層は domain 層に依存しますが、infrastructure 層には依存しません（インターフェース経由）。
 - infrastructure 層は domain 層・application 層のインターフェースを実装します。
+
+#### 依存関係図
+
+```mermaid
+graph TD
+    %% レイヤー
+    subgraph Domain
+        types[types.ts]
+        request[request.ts]
+        events[request.events.ts]
+        commands[request.commands.ts]
+    end
+
+    subgraph Application
+        requester[requester-service.ts]
+        approver[approver-service.ts]
+        handler[request-command-handler.ts]
+        repoInterface[request-repository.ts]
+        eventStoreInterface[event-store.ts]
+    end
+
+    subgraph Infrastructure
+        repoImpl[request-repository-impl.ts]
+        eventStoreImpl[in-memory-event-store.ts]
+        idGen[id-generator.ts]
+    end
+
+    %% 依存関係
+    request --> types
+    events --> types
+    commands --> types
+
+    requester --> handler
+    requester --> repoInterface
+    approver --> handler
+    approver --> repoInterface
+    handler --> commands
+    handler --> events
+    handler --> repoInterface
+    handler --> eventStoreInterface
+
+    repoImpl --> repoInterface
+    repoImpl --> eventStoreInterface
+    repoImpl --> request
+    repoImpl --> events
+    eventStoreImpl --> eventStoreInterface
+    eventStoreImpl --> events
+
+    %% スタイル
+    classDef domain fill:#f9f,stroke:#333,stroke-width:2px
+    classDef application fill:#bbf,stroke:#333,stroke-width:2px
+    classDef infrastructure fill:#bfb,stroke:#333,stroke-width:2px
+
+    class types,request,events,commands domain
+    class requester,approver,handler,repoInterface,eventStoreInterface application
+    class repoImpl,eventStoreImpl,idGen infrastructure
+```
 
 ---
 

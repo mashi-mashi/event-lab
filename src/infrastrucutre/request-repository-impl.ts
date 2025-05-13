@@ -1,11 +1,13 @@
-import type { EventStore } from "../application/repositories/event-store";
-import type { RequestRepository } from "../application/repositories/request-repository";
-import { isPendingRequest } from "../domain/request";
-import type { PendingRequest, RequestType } from "../domain/request";
-import type { RequestEvent } from "../domain/request-events";
+import type { EventStore } from "../application/repositories/event.store";
+import type { RequestRepository } from "../application/repositories/request.repository";
+import { isPendingRequest } from "../domain/request.entity";
+import type { PendingRequest, RequestType } from "../domain/request.entity";
+import type { RequestDomainEvent } from "../domain/request.events";
 import type { UUID } from "../domain/types";
 
-function rebuildRequestFromEvents(events: RequestEvent[]): RequestType | null {
+function rebuildRequestFromEvents(
+	events: RequestDomainEvent[],
+): RequestType | null {
 	if (events.length === 0) return null;
 
 	// 初期イベントは REQUEST_CREATED であるべき
@@ -15,7 +17,7 @@ function rebuildRequestFromEvents(events: RequestEvent[]): RequestType | null {
 	}
 
 	// 基本プロパティを初期化
-	const initialRequest: Partial<RequestType> = {
+	const initialRequest: RequestType = {
 		id: firstEvent.aggregateId,
 		title: firstEvent.data.title,
 		description: firstEvent.data.description,
@@ -26,7 +28,7 @@ function rebuildRequestFromEvents(events: RequestEvent[]): RequestType | null {
 		events: [],
 	};
 
-	const request = events.slice(1).reduce<Partial<RequestType>>((acc, event) => {
+	const request = events.slice(1).reduce<RequestType>((acc, event) => {
 		const updatedAcc = {
 			// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
 			...acc,
@@ -34,6 +36,7 @@ function rebuildRequestFromEvents(events: RequestEvent[]): RequestType | null {
 			events: [...(acc.events || []), event],
 		};
 
+		// Javaならパターンマッチ
 		switch (event.type) {
 			case "REQUEST_APPROVED": {
 				const approvedEvent = event;
@@ -66,7 +69,7 @@ function rebuildRequestFromEvents(events: RequestEvent[]): RequestType | null {
 		}
 	}, initialRequest);
 
-	return request as RequestType;
+	return request;
 }
 
 export class RequestRepositoryImpl implements RequestRepository {
@@ -81,12 +84,11 @@ export class RequestRepositoryImpl implements RequestRepository {
 		this.requestCache.set(request.id, request);
 		const lastEvent = request.events[request.events.length - 1];
 		if (lastEvent) {
-			await this.eventStore.saveEvent(lastEvent as RequestEvent);
+			await this.eventStore.saveEvent(lastEvent);
 		}
 	}
 
 	async findById(id: UUID): Promise<RequestType | null> {
-		// まずキャッシュを確認
 		if (this.requestCache.has(id)) {
 			return this.requestCache.get(id) || null;
 		}
@@ -104,6 +106,8 @@ export class RequestRepositoryImpl implements RequestRepository {
 
 	async findPendingById(id: UUID): Promise<PendingRequest | null> {
 		const request = await this.findById(id);
+
+		// Javaならinstanceofでいい
 		if (request && isPendingRequest(request)) {
 			return request;
 		}
