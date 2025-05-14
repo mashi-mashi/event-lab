@@ -13,20 +13,24 @@ const main = async () => {
 	const requesterService = new RequesterServiceImpl(commandHandler, repository);
 	const approverService = new ApproverServiceImpl(commandHandler, repository);
 
+	// 1. 申請者：リクエストを作成
 	const requestId = await requesterService.createRequest("test", "test", "1");
 
 	console.log(requestId);
 
+	// 2. 管理者：保留中のリクエストを取得
 	const pendingRequests = await approverService.getPendingRequests();
 
 	console.log(pendingRequests);
 
+	// 3. 管理者：リクエストを承認
 	await approverService.approveRequest(requestId, "2");
 	const request = await approverService.getRequestById(requestId);
 
 	console.log(request);
 
 	try {
+		// 100. 申請者：存在しないリクエストを承認しようとする
 		await approverService.approveRequest(generateUUID(), "2");
 	} catch (error) {
 		console.log(error);

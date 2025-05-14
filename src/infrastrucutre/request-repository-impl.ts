@@ -115,14 +115,6 @@ export class RequestRepositoryImpl implements RequestRepository {
 	}
 
 	async findAllPending(): Promise<PendingRequest[]> {
-		const pendingRequests: PendingRequest[] = [];
-
-		for (const request of this.requestCache.values()) {
-			if (isPendingRequest(request)) {
-				pendingRequests.push(request);
-			}
-		}
-
-		return pendingRequests;
+		return Array.from(this.requestCache.values()).filter(isPendingRequest);
 	}
 }
