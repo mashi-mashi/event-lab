@@ -1,5 +1,5 @@
 import type { DomainEventType, RequestDomainEvent } from "./request.events";
-import type { UUID, UserID, Timestamp } from "./types";
+import type { UUID, UserID, EpochMillisecond } from "./types";
 
 /**
  * イベントソーシングパターンで管理されるエンティティの基底インターフェース
@@ -13,54 +13,54 @@ interface EventSourcedEntity<T extends DomainEventType> {
  * リクエストエンティティの基底インターフェース
  * イベントソーシングパターンを使用し、リクエストの状態変更をイベントとして記録
  */
-interface RequestEntity extends EventSourcedEntity<RequestDomainEvent> {
+interface RequestAggregate extends EventSourcedEntity<RequestDomainEvent> {
 	id: UUID;
 	title: string;
 	description: string;
 	requesterId: UserID;
-	createdAt: Timestamp;
+	createdAt: EpochMillisecond;
 }
 
 /**
  * 保留中のリクエストを表すインターフェース
  * 承認待ちの状態を示し、更新日時を保持
  */
-export interface PendingRequest extends RequestEntity {
+export interface PendingRequest extends RequestAggregate {
 	status: "PENDING";
-	updatedAt: Timestamp;
+	updatedAt: EpochMillisecond;
 }
 
 /**
  * 承認済みのリクエストを表すインターフェース
  * 承認者情報と承認日時を保持
  */
-export interface ApprovedRequest extends RequestEntity {
+export interface ApprovedRequest extends RequestAggregate {
 	status: "APPROVED";
 	approverId: UserID;
-	approvedAt: Timestamp;
-	updatedAt: Timestamp;
+	approvedAt: EpochMillisecond;
+	updatedAt: EpochMillisecond;
 }
 
 /**
  * 却下されたリクエストを表すインターフェース
  * 却下理由と却下者情報を保持
  */
-export interface RejectedRequest extends RequestEntity {
+export interface RejectedRequest extends RequestAggregate {
 	status: "REJECTED";
 	approverId: UserID;
-	rejectedAt: Timestamp;
+	rejectedAt: EpochMillisecond;
 	reason: string;
-	updatedAt: Timestamp;
+	updatedAt: EpochMillisecond;
 }
 
 /**
  * キャンセルされたリクエストを表すインターフェース
  * キャンセル日時を保持
  */
-export interface CanceledRequest extends RequestEntity {
+export interface CanceledRequest extends RequestAggregate {
 	status: "CANCELED";
-	canceledAt: Timestamp;
-	updatedAt: Timestamp;
+	canceledAt: EpochMillisecond;
+	updatedAt: EpochMillisecond;
 }
 
 /**

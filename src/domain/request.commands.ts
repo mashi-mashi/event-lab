@@ -1,8 +1,8 @@
-import type { Timestamp, UserID, UUID } from "./types";
+import type { EpochMillisecond, UserID, UUID } from "./types";
 
 export interface Command {
 	id: UUID;
-	timestamp: Timestamp;
+	timestamp: EpochMillisecond;
 	type: string;
 }
 

@@ -6,7 +6,8 @@
     "dev": "tsx --watch src/index.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4"
+    "@biomejs/biome": "1.9.4",
+    "@types/node": "^22.15.17"
   },
   "peerDependencies": {
     "typescript": "^5"

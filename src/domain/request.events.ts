@@ -1,4 +1,4 @@
-import type { Timestamp, UserID, UUID } from "./types";
+import type { EpochMillisecond, UserID, UUID } from "./types";
 
 /**
  * ドメインイベントの基底インターフェース
@@ -6,7 +6,7 @@ import type { Timestamp, UserID, UUID } from "./types";
  */
 export interface DomainEventType {
 	id: UUID;
-	timestamp: Timestamp;
+	timestamp: EpochMillisecond;
 	aggregateId: UUID;
 	type: string;
 }
